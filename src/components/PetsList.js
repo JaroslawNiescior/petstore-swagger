@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPets } from '../actions';
 import { Image, List, Divider, Header } from 'semantic-ui-react'
@@ -7,15 +7,15 @@ import ModalLogic from "./ModalLogic";
 
 const PetsList = ({ status }) => {
     const data = useSelector(state => state.pets);
+    const [firstRender, setFirstRender] = useState(false);
     const dispatch = useDispatch();
 
-    const loadDataOnlyOnce = () => {
-        dispatch(fetchPets(status));
-    }
-
     useEffect(() => {
-        loadDataOnlyOnce();
-    }, []);
+        if (!firstRender) {
+            dispatch(fetchPets(status));
+            setFirstRender(true);
+        }
+    }, [firstRender, dispatch, status])
 
     const renderedList = data.length > 0 ? data.slice(0, 10).map((pet, index) => {
         return (
