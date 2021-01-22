@@ -1,4 +1,4 @@
-export default (state = [], action) => {
+const FETCH_PETS = (state = [], action) => {
     switch (action.type) {
         case 'FETCH_PETS':
             return action.payload;
@@ -6,3 +6,5 @@ export default (state = [], action) => {
             return state;
     }
 };
+
+export default FETCH_PETS;

@@ -1,0 +1,19 @@
+:root {
+  --aColor: #06224a;
+  --bColor: #0245a3;
+  --cColor: #8fbaf3;
+  --white: #ffffff;
+}
+body {
+  background-color: var(--cColor);
+}
+
+.App_list,
+.container {
+  background-color: var(--white);
+  padding: 3em;
+}
+
+.ui.list > .item > .image {
+  margin-right: 3em;
+}

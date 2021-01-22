@@ -1,75 +1,43 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchPets } from '../actions';
-import {
-    Grid,
-    Segment,
-    Container,
-    Header,
-    Pagination,
-    PaginationProps,
-    Icon
-} from 'semantic-ui-react';
+import { Image, List, Divider, Header } from 'semantic-ui-react'
+import ModalLogic from "./ModalLogic";
 
 
-class PetsList extends Component {
-    componentDidMount() {
-        this.props.fetchPets("available");
-    }
-    renderList() {
-        return this.props.pets.map((pet, index) => {
-            return (
-                <div className="item" key={index}>
-                    <div className="right floated content">
-                        <div className="ui button">Add</div>
-                    </div>
-                    <div className="content">
-                        {pet.name}
-                    </div>
-                </div>
+const PetsList = ({ status }) => {
+    const data = useSelector(state => state.pets);
+    const dispatch = useDispatch();
 
-            )
-        });
-    }
-    render() {
-        return <div className="ui relaxed divided list">{this.renderList()}</div>;
+    const loadDataOnlyOnce = () => {
+        dispatch(fetchPets(status));
     }
 
-    render() {
+    useEffect(() => {
+        loadDataOnlyOnce();
+    }, []);
+
+    const renderedList = data.length > 0 ? data.slice(0, 10).map((pet, index) => {
         return (
-            <Container style={{ marginTop: '3em' }} text>
-                <Grid columns={1} divided="vertically">
-                    <Grid.Row>
-                        {(this.state.articleDatas || []).map(function (articleData, i) {
-                            return (
-                                <Grid.Column>
-                                    <Segment>
-                                        <Header as="h1">{articleData.title}</Header>
-                                        <p>{articleData.content}</p>
-                                        <Link to={`/detail/${articleData.id}`}>
-                                            continue reading
-                        </Link>
-                                    </Segment>
-                                </Grid.Column>
-                            );
-                        })}
-                    </Grid.Row>
-                </Grid>
-                <Pagination
-                    defaultActivePage={1}
-                    totalPages={Math.ceil(this.state.articles.length / 5)}
-                    onPageChange={this.btnClick}
-                />
-            </Container>
-        );
-    }
-}
+            <List.Item key={index}>
+                {status === "available" ? (
+                    <ModalLogic pet_={pet} imageSrc={`https://placedog.net/600/600?random&foo=${Math.random()}`} />
+                ) : null}
+                <Image size='tiny' avatar src={`https://placedog.net/600/600?random&foo=${Math.random()}`} />
+                <List.Content><Header size="huge">{pet.name}</Header></List.Content>
+            </List.Item>
+        )
+    }) :
+        <List.Item>
+            <List.Content><Header size="huge">No items...</Header></List.Content>
+        </List.Item>;
 
-const mapStateToProps = state => {
-    return { pets: state.pets };
+    return (
+        <div className="App_list">
+            <List relaxed divided verticalAlign='middle'>{renderedList}</List>
+            <Divider />
+        </div>
+    );
 };
 
-export default connect(
-    mapStateToProps,
-    { fetchPets }
-)(PetsList);
+export default PetsList;
